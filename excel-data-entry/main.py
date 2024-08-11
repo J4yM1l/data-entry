@@ -1,11 +1,11 @@
 import tkinter
 from tkinter import ttk
-from tkinter import messagebox
 import os
 import openpyxl
 
 
 formField_list = []
+cwd = os.getcwd()
 def submit_data():
     accepted = formField_list[8].get()
     
@@ -25,15 +25,14 @@ def submit_data():
             term_period = formField_list[5].get()
             class_type = formField_list[6].get()
             class_number = formField_list[7].get()
-            
+            print("-----------------Student Data---------------")
             print("First name: ", firstname, "Last name: ", lastname)
-            print("ID: ", student_id, "Address: ", student_address, "\nPhone Number: ", phone_number)
-            print("Term Period: ", term_period, "Class Type: ", class_type, "Level: ", class_number)
+            print("ID: ", student_id, "\nAddress: ", student_address, "\nPhone Number: ", phone_number)
+            print("Term Period: ", term_period, "\nClass Type: ", class_type, "\nLevel: ", class_number)
             # print("Registration status", registration_status)
             print("------------------------------------------")
-            # make sure to update with your correct path
-            filepath = "~\\tkinter-data-entry-template\\excel-data-entry\\data.xlsx" 
-            # "D:\codefirst.io\Tkinter Data Entry\data.xlsx"
+            # make sure to update the path syntax for other OS
+            filepath = cwd+"\\data.xlsx"
             
             if not os.path.exists(filepath):
                 workbook = openpyxl.Workbook()
@@ -158,7 +157,6 @@ def setup_form(frame):
 
 def main():
     # code executions
-    print("======Setting up Windows=====")
     window = tkinter.Tk()
     window.title("Data Entry Form")
     frame = tkinter.Frame(window)
