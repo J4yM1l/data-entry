@@ -18,22 +18,22 @@ def submit_data():
         total_cost = 5000
         if firstname and lastname:
             amount_paid = formField_list[5].get()
-            if int(amount_paid) < total_cost:
+            if int(amount_paid) > 0 and int(amount_paid) <= total_cost:
                 balance = total_cost - int(amount_paid)
                 # Todo student id shld be required
                 # TODO: Optimize formField DS
                 student_id = formField_list[2].get()
                 student_address = formField_list[3].get()
                 phone_number = formField_list[4].get()
-                # amount_paid = formField_list[5].get()
+                
                 # Course info
                 term_period = formField_list[6].get()
                 class_type = formField_list[7].get()
                 class_number = formField_list[8].get()
                 print("---------------Student Data---------------")
-                print("First name:", firstname, "Last name: ", lastname, "\nAmount Paid: ",amount_paid)
+                print("First name:", firstname, "Last name: ", lastname, "\nAmount Paid: le",amount_paid)
                 print("ID: ", student_id, "\nAddress: ", student_address, "\nPhone Number: ", phone_number)
-                print("Term Period: ", term_period, "\nClass Type: ", class_type, "\nLevel: ", class_number, "\nBalance: ", balance)
+                print("Term Period: ", term_period, "\nClass Type: ", class_type, "\nLevel: ", class_number, "\nBalance: le", balance)
                 # print("Registration status", registration_status)
                 print("------------------------------------------")
                 # make sure to update the path syntax for other OS
@@ -50,8 +50,8 @@ def submit_data():
                 sheet.append([student_id, firstname, lastname, phone_number, student_address, term_period, class_type, class_number, amount_paid, balance])
                 workbook.save(filepath)
 
-            elif int(amount_paid) > total_cost:
-                tkinter.messagebox.showwarning(title="Error", message="Amount cannot be more than 5000.")
+            elif int(amount_paid) <= 0 or int(amount_paid) > total_cost:
+                tkinter.messagebox.showwarning(title="Error", message="Amount cannot be less than or equal to zero or more than le5000.")
                 # os._exit(1)
                 
         else:
