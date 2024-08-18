@@ -7,6 +7,37 @@ import openpyxl
 
 formField_list = []
 cwd = os.getcwd()
+filepath = cwd+"\\data.xlsx" # make sure to update the path syntax for other OS
+
+# This class creates an external window
+class Window(tkinter.Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title('Student List')
+        self.geometry('800x800')
+        self.minsize(500,500)
+        self.maxsize(900,900)
+        self.fetch_records()
+
+def fetch_records():
+    global additional_window
+    additional_window = tkinter.Toplevel()
+    additional_window.title('Student List')
+    additional_window.geometry('800x800')
+            # workbook object is created
+    wb_obj = openpyxl.load_workbook(filepath)
+    
+    sheet_obj = wb_obj.active
+    max_col = sheet_obj.max_column
+    max_row = sheet_obj.max_row
+    
+    # Loop will print all rows columns name
+    for c in range(1, max_col + 1):
+        for r in range(1, max_row+1):
+            cell_obj = sheet_obj.cell(row = r, column = c)
+            ttk.Label(additional_window, text=cell_obj.value).grid(row=r+1, column=c, padx=5)
+
+
 def submit_data():
     accepted = formField_list[9].get()
     
@@ -36,8 +67,6 @@ def submit_data():
                 print("Term Period: ", term_period, "\nClass Type: ", class_type, "\nLevel: ", class_number, "\nBalance: le", balance)
                 # print("Registration status", registration_status)
                 print("------------------------------------------")
-                # make sure to update the path syntax for other OS
-                filepath = cwd+"\\data.xlsx"
                 
                 if not os.path.exists(filepath):
                     workbook = openpyxl.Workbook()
@@ -47,12 +76,11 @@ def submit_data():
                     workbook.save(filepath)
                 workbook = openpyxl.load_workbook(filepath)
                 sheet = workbook.active
-                sheet.append([student_id, firstname, lastname, phone_number, student_address, term_period, class_type, class_number, amount_paid, balance])
+                sheet.append([student_id, firstname, lastname, phone_number, student_address, term_period, class_type, class_number, int(amount_paid), balance])
                 workbook.save(filepath)
 
             elif int(amount_paid) <= 0 or int(amount_paid) > total_cost:
                 tkinter.messagebox.showwarning(title="Error", message="Amount cannot be less than or equal to zero or more than le5000.")
-                # os._exit(1)
                 
         else:
             tkinter.messagebox.showwarning(title="Error", message="First name and last name are required.")
@@ -73,8 +101,8 @@ def clear_form():
 
 
 def set_form_label_frame(parentFrame, frameTxt=None, r=0, c=0):
-    form_label_frame =tkinter.LabelFrame(parentFrame, text=frameTxt)
-    form_label_frame.grid(row= r, column=c, padx=20, pady=10)
+    form_label_frame =tkinter.LabelFrame(parentFrame, text=frameTxt, background='Gray')
+    form_label_frame.grid(row= r, column=c)
     return form_label_frame
 
 def set_form_label(labelFrame, labelTxt, r, c):
@@ -99,8 +127,8 @@ def set_form_combobox(comboboxFrame, val1, val2, val3, r,c):
 
 def create_button(frame, btnType, func, r, c):
      # Button
-    button = tkinter.Button(frame, text=btnType, command=func, font=("Helvetica", 14))
-    button.grid(row=r, column=c, sticky="news", padx=250, pady=5)
+    button = tkinter.Button(frame, text=btnType, command=func, font=("Helvetica", 10), width=1)
+    button.grid(row=r, column=c, sticky="news", padx=5, pady=10)
     return button
 
 # Creating windows Forms
@@ -154,19 +182,22 @@ def setup_form(frame):
         widget.grid_configure(padx=10, pady=5)
 
     terms_frame = set_form_label_frame(frame, "Terms & Conditions", 2,0)
-    # terms_frame.place(relx=0.1, rely=0.9)
+    terms_frame.rowconfigure(0, weight=1)
+    terms_frame.columnconfigure((0,1,2), weight=1, uniform='a')
 
     accept_var = tkinter.StringVar(value="Not Accepted")
     terms_check = tkinter.Checkbutton(terms_frame, text= "I accept the terms and conditions.",
                                     variable=accept_var, onvalue="Accepted", offvalue="Not Accepted")
-    terms_check.grid(row=0, column=0)
+    terms_check.grid(row=0, column=1)
     '''TODO: Change the formField to an object'''
     formField_list.append(accept_var)
 
-    create_button(frame,btnType="Submit Data", func=submit_data, r=5, c=0)
-    clear_btn = create_button(frame,btnType="Clear Entry", func=clear_form, r=5, c=1)
-    clear_btn.place(relx=0.2,rely=0.9) # move botton position x-axis=0.2 and y-axis=0.9
+    create_button(terms_frame,btnType="Clear Entry", func=clear_form, r=1, c=0)
+    create_button(terms_frame,btnType="Submit Data", func=submit_data, r=1, c=2)
+    create_button(terms_frame,btnType="List Students Entry", func=fetch_records, r=1, c=1)
 
+
+ # TODO: Add display of the student list when inputs are made
 
 def main():
     # code executions
